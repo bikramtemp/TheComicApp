@@ -37,7 +37,7 @@ fun HomeScreen() {
                         Box(modifier = Modifier.padding(bottom = 100.dp)) {
                             when (selectedIndex.value) {
                                 0 -> {
-                                    // TODO show comics here
+                                    ComicsScreen()
                                 }
                                 1 -> {
                                     // TODO show saved comics
