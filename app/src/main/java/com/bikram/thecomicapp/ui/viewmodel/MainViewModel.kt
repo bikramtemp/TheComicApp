@@ -8,6 +8,8 @@ import com.bikram.thecomicapp.model.ComicRepository
 import com.bikram.thecomicapp.model.response.ComicResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainViewModel(private val repository: ComicRepository = ComicRepository()) : ViewModel() {
     init {
@@ -21,5 +23,15 @@ class MainViewModel(private val repository: ComicRepository = ComicRepository())
 
     private suspend fun getComic(comicId: Int): ComicResponse {
         return repository.getComic(comicId)
+    }
+
+    fun getFormattedDate(day: String?, month: String?, year: String?): String {
+        return if (day != null) {
+            val date = "$day-$month-$year"
+            val parser = SimpleDateFormat("dd-MM-yyyy")
+            val formatter = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
+            parser.parse(date)?.let { formatter.format(it) } ?: date
+        } else
+            ""
     }
 }
