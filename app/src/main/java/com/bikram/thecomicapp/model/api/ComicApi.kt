@@ -18,12 +18,18 @@ class ComicWebService {
         api = retrofit.create(ComicApi::class.java)
     }
 
-    suspend fun getComic(comicId: Int): ComicResponse {
-        return api.getComic(comicId)
+    suspend fun getComic(comicId: Int?): ComicResponse {
+        return if (comicId != null)
+            api.getComic(comicId)
+        else
+            api.getLatestComic()
     }
 
     interface ComicApi {
         @GET("{id}/info.0.json")
         suspend fun getComic(@Path("id") comicId: Int): ComicResponse
+
+        @GET("info.0.json")
+        suspend fun getLatestComic(): ComicResponse
     }
 }

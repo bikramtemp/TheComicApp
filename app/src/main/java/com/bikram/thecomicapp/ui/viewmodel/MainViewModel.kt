@@ -6,23 +6,65 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bikram.thecomicapp.model.ComicRepository
 import com.bikram.thecomicapp.model.response.ComicResponse
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
 class MainViewModel(private val repository: ComicRepository = ComicRepository()) : ViewModel() {
+    var currentId = 1
+    var latestComicId = 1
+
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            val comic = getComic(1)     // fetch 1st comic for test
+        viewModelScope.launch {
+            val comic = getComic()     // get most recent comic
+            currentId = comic.num!!
+            latestComicId = comic.num!!
             comicState.value = comic
         }
     }
 
     val comicState: MutableState<ComicResponse> = mutableStateOf(ComicResponse())
 
-    private suspend fun getComic(comicId: Int): ComicResponse {
+    // comicId will be null if fetching recent comic, otherwise an Int
+    private suspend fun getComic(comicId: Int? = null): ComicResponse {
         return repository.getComic(comicId)
+    }
+
+    // called from all comic requests (first, last, random etc)
+    private fun getGenericComic(comicId: Int) {
+        viewModelScope.launch {
+            val meals = getComic(comicId)
+            comicState.value = meals
+        }
+    }
+
+    fun getPrevComic() {
+        if (currentId == 1)
+            return
+
+        getGenericComic(--currentId)
+    }
+
+    fun getNextComic() {
+        if (currentId == latestComicId)
+            return
+
+        getGenericComic(++currentId)
+    }
+
+    fun getFirstComic() {
+        currentId = 1
+        getGenericComic(currentId)
+    }
+
+    fun getLastComic() {
+        currentId = latestComicId
+        getGenericComic(latestComicId)
+    }
+
+    fun getRandomComic() {
+        currentId = Random().nextInt(latestComicId)
+        getGenericComic(currentId)
     }
 
     fun getFormattedDate(day: String?, month: String?, year: String?): String {

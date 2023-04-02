@@ -5,12 +5,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowLeft
-import androidx.compose.material.icons.filled.ArrowRight
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
@@ -65,10 +65,10 @@ fun ComicDetails(
                     .size(36.dp)
                     .combinedClickable(
                         onClick = {
-                            // TODO show previous comic
+                            viewModel.getPrevComic()
                         },
                         onLongClick = {
-                            // TODO show first comic
+                            viewModel.getFirstComic()
                         },
                     )
             )
@@ -102,10 +102,10 @@ fun ComicDetails(
                     .size(36.dp)
                     .combinedClickable(
                         onClick = {
-                            // TODO show next comic
+                            viewModel.getNextComic()
                         },
                         onLongClick = {
-                            // TODO show last comic
+                            viewModel.getLastComic()
                         },
                     )
             )
@@ -123,16 +123,25 @@ fun ComicDetails(
                 .fillMaxWidth()
         )
 
-        comic.title?.let {
-            Text(
-                text = it,
-                color = colorPrimary,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                modifier = Modifier
-                    .padding(10.dp)
-            )
+        Row(
+            Modifier
+                .requiredHeight(60.dp)
+                .padding(top = 10.dp)) {
+            comic.title?.let {
+                Text(
+                    text = it,
+                    color = colorPrimary,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    modifier = Modifier
+                        .padding(10.dp)
+                )
+            }
+
+            addComicAction(imageVector = Icons.Filled.BookmarkBorder, description = "Save")
+            addComicAction(imageVector = Icons.Filled.Help, description = "Help")
+            addComicAction(imageVector = Icons.Filled.Share, description = "Share")
         }
 
         comic.alt?.let {
@@ -146,5 +155,20 @@ fun ComicDetails(
                     .fillMaxWidth()
             )
         }
+    }
+}
+
+@Composable
+fun addComicAction(imageVector: ImageVector, description: String) {
+    Column(
+        modifier = Modifier
+            .fillMaxHeight(), verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = imageVector,
+            contentDescription = description,
+            tint = colorPrimary,
+            modifier = Modifier.padding(start = 4.dp)
+        )
     }
 }
