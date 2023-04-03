@@ -1,5 +1,6 @@
 package com.bikram.thecomicapp.ui.screens
 
+import android.content.Intent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
@@ -11,8 +12,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -42,7 +47,10 @@ fun ComicDetails(
     viewModel: MainViewModel
 ) {
     val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
+    val haptic = LocalHapticFeedback.current
 
+    // Column with nav icons and id/date texts
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -65,9 +73,11 @@ fun ComicDetails(
                     .size(36.dp)
                     .combinedClickable(
                         onClick = {
+                            performHapticFeedback(haptic)
                             viewModel.getPrevComic()
                         },
                         onLongClick = {
+                            performHapticFeedback(haptic)
                             viewModel.getFirstComic()
                         },
                     )
@@ -102,9 +112,11 @@ fun ComicDetails(
                     .size(36.dp)
                     .combinedClickable(
                         onClick = {
+                            performHapticFeedback(haptic)
                             viewModel.getNextComic()
                         },
                         onLongClick = {
+                            performHapticFeedback(haptic)
                             viewModel.getLastComic()
                         },
                     )
@@ -123,10 +135,12 @@ fun ComicDetails(
                 .fillMaxWidth()
         )
 
+        // Row with comic name and actions - save, help, share
         Row(
             Modifier
                 .requiredHeight(60.dp)
-                .padding(top = 10.dp)) {
+                .padding(top = 10.dp)
+        ) {
             comic.title?.let {
                 Text(
                     text = it,
@@ -139,11 +153,39 @@ fun ComicDetails(
                 )
             }
 
-            addComicAction(imageVector = Icons.Filled.BookmarkBorder, description = "Save")
-            addComicAction(imageVector = Icons.Filled.Help, description = "Help")
-            addComicAction(imageVector = Icons.Filled.Share, description = "Share")
+            addComicAction(
+                imageVector = Icons.Filled.BookmarkBorder,
+                description = "Save",
+                onActionClick = {
+                    //TODO handle save action
+                })
+
+            addComicAction(
+                imageVector = Icons.Filled.Help,
+                description = "Help",
+                onActionClick = {
+                    performHapticFeedback(haptic)
+                    uriHandler.openUri("https://www.explainxkcd.com/wiki/index.php/${comic.num}")
+                })
+
+            addComicAction(
+                imageVector = Icons.Filled.Share,
+                description = "Share",
+                onActionClick = {
+                    performHapticFeedback(haptic)
+
+                    val sendIntent: Intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, "https://xkcd.com/${comic.num}")
+                        type = "text/plain"
+                    }
+
+                    val shareIntent = Intent.createChooser(sendIntent, null)
+                    context.startActivity(shareIntent)
+                })
         }
 
+        // Comic description
         comic.alt?.let {
             Text(
                 text = it,
@@ -158,8 +200,12 @@ fun ComicDetails(
     }
 }
 
+fun performHapticFeedback(haptic: HapticFeedback) {
+    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+}
+
 @Composable
-fun addComicAction(imageVector: ImageVector, description: String) {
+fun addComicAction(imageVector: ImageVector, description: String, onActionClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxHeight(), verticalArrangement = Arrangement.Center
@@ -168,7 +214,9 @@ fun addComicAction(imageVector: ImageVector, description: String) {
             imageVector = imageVector,
             contentDescription = description,
             tint = colorPrimary,
-            modifier = Modifier.padding(start = 4.dp)
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .clickable(onClick = onActionClick),
         )
     }
 }

@@ -16,9 +16,10 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import com.bikram.thecomicapp.ui.theme.colorPrimary
+import com.bikram.thecomicapp.ui.viewmodel.MainViewModel
 
 @Composable
-fun CustomAppBar() {
+fun CustomAppBar(viewModel: MainViewModel) {
     TopAppBar(
         backgroundColor = colorPrimary,
         modifier = Modifier.fillMaxWidth(),
@@ -35,7 +36,8 @@ fun CustomAppBar() {
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterEnd),
                     onClick = {
-                        // TODO handle search click
+                        // Open search dialog on search icon click
+                        viewModel.openCustomDialogState.value = true
                     }
                 ) {
                     Image(

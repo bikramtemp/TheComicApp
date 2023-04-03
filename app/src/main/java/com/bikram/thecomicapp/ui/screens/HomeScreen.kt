@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bikram.thecomicapp.ui.components.CustomAppBar
 import com.bikram.thecomicapp.ui.components.CustomBottomBar
+import com.bikram.thecomicapp.ui.components.CustomSearchDialog
 import com.bikram.thecomicapp.ui.theme.colorPrimary
 import com.bikram.thecomicapp.ui.theme.ghost_white
 import com.bikram.thecomicapp.ui.viewmodel.MainViewModel
@@ -29,7 +30,7 @@ fun HomeScreen() {
     Surface(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             topBar = {
-                CustomAppBar()
+                CustomAppBar(viewModel)
             },
             content = {
                 Surface(modifier = Modifier.fillMaxSize(), color = colorPrimary) {
@@ -60,11 +61,14 @@ fun HomeScreen() {
                 }) {
                     Icon(
                         imageVector = Icons.Filled.Shuffle,
-                        contentDescription = "Shuffle",
-                        tint = colorPrimary
+                        contentDescription = "Shuffle"
                     )
                 }
             }
         )
+    }
+
+    if (viewModel.openCustomDialogState.value) {
+        CustomSearchDialog(viewModel)
     }
 }

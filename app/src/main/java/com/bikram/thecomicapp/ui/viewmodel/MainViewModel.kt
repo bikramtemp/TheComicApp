@@ -25,13 +25,16 @@ class MainViewModel(private val repository: ComicRepository = ComicRepository())
 
     val comicState: MutableState<ComicResponse> = mutableStateOf(ComicResponse())
 
+    var openCustomDialogState = mutableStateOf(false)
+
     // comicId will be null if fetching recent comic, otherwise an Int
     private suspend fun getComic(comicId: Int? = null): ComicResponse {
         return repository.getComic(comicId)
     }
 
     // called from all comic requests (first, last, random etc)
-    private fun getGenericComic(comicId: Int) {
+    // also called from search icon in top bar
+    fun getGenericComic(comicId: Int) {
         viewModelScope.launch {
             val meals = getComic(comicId)
             comicState.value = meals
