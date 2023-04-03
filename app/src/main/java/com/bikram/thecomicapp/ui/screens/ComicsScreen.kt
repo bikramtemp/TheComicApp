@@ -1,6 +1,7 @@
 package com.bikram.thecomicapp.ui.screens
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
@@ -153,14 +154,14 @@ fun ComicDetails(
                 )
             }
 
-            addComicAction(
+            AddComicAction(
                 imageVector = Icons.Filled.BookmarkBorder,
                 description = "Save",
                 onActionClick = {
-                    //TODO handle save action
+                    Toast.makeText(context, "Favorites coming in next version!", Toast.LENGTH_SHORT).show()
                 })
 
-            addComicAction(
+            AddComicAction(
                 imageVector = Icons.Filled.Help,
                 description = "Help",
                 onActionClick = {
@@ -168,7 +169,7 @@ fun ComicDetails(
                     uriHandler.openUri("https://www.explainxkcd.com/wiki/index.php/${comic.num}")
                 })
 
-            addComicAction(
+            AddComicAction(
                 imageVector = Icons.Filled.Share,
                 description = "Share",
                 onActionClick = {
@@ -205,7 +206,7 @@ fun performHapticFeedback(haptic: HapticFeedback) {
 }
 
 @Composable
-fun addComicAction(imageVector: ImageVector, description: String, onActionClick: () -> Unit) {
+fun AddComicAction(imageVector: ImageVector, description: String, onActionClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxHeight(), verticalArrangement = Arrangement.Center

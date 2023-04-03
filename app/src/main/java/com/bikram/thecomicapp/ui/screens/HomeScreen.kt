@@ -45,7 +45,7 @@ fun HomeScreen() {
                                     ComicsScreen()
                                 }
                                 1 -> {
-                                    // TODO show saved comics
+                                    SavedComicsScreen()
                                 }
                             }
                         }
