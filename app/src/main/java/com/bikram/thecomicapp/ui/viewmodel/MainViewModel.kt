@@ -79,4 +79,11 @@ class MainViewModel(private val repository: ComicRepository = ComicRepository())
         } else
             ""
     }
+
+    /*
+    TODO add good to have stuff in next iteration
+    handle network checks before calling service
+    add timeouts to n/w calls
+    add success/failure response states and handle loader
+     */
 }
